@@ -1,0 +1,479 @@
+#Data Segment
+.data
+prompt:                 .asciiz         "           Welcome to Mips assembly Langauge !!!\n"
+prompt1:                .asciiz         "______________________________________________________\n"
+prompt2:                .asciiz          "\n___________________NUMERIC ARRAY_____________________!!\n"
+Length: 		.asciiz 	"How many elements you want to store in array list ? "
+prompt3:                .asciiz         "______________________________________________________\n"
+items: 	                .asciiz 	"Enter any integer value: "
+prompt4:                .asciiz         "\n______________________________________________________\n"
+Unsorted_array: 	.asciiz 	"                !! UNSORTED ARRAY LIST !!                \n"
+nl: 			.asciiz 	"\n"
+List:                   .asciiz         "List: { "
+tl: 			.asciiz 	"  "
+t2: 			.asciiz 	"  "
+B:                      .asciiz         "}"
+display_descending:     .asciiz         "           !! SORTED ARRAY IN DESCENDING ORDER !!          \n"
+display_ascending:      .asciiz         "           !! SORTED ARRAY IN ASCENDING ORDER !!          \n"
+searching:              .asciiz         "           !! SEARCHING OF REQUIRED ELEMENT  !!            "
+searching_element: 	.asciiz 	"\nPlease insert a element which you want to search: "
+f:			.asciiz 	" was found at array index ["
+cl_bracket:		.asciiz		"]"
+nf:                     .asciiz 	" was not found"
+terminate: 		.asciiz 	"\nProgram complete"
+again_search:            .asciiz         "\nDo you want to search again ? if yes then press 1 :"
+end:                    .asciiz         "\nTHANK YOU !!!"
+
+.align 2
+array: 			.space		 40
+
+#Code Segment
+.text
+.globl main
+main:
+
+li $v0,4
+la $a0,prompt
+syscall
+
+li $v0,4
+la $a0,prompt1
+syscall
+
+li $v0,4
+la $a0,prompt2
+syscall
+
+jal Enter_Length	
+jal Enter_items 		
+jal Display_Unsorted_arrayV
+jal Display_Unsorted_arrayH
+jal sort_array_descending
+jal sorted_array_descending_displayV
+jal sorted_array_descending_displayH
+jal sort_array_ascending
+jal sorted_array_ascending_displayV
+jal sorted_array_ascending_displayH
+jal search_element
+jal search		
+jal search_result
+jal again	
+jal search		
+jal search_result
+j Exit 			
+
+	
+#AREEJ FATIMA
+Enter_Length:
+
+la $a0,Length  	
+li $v0, 4 		
+syscall
+		
+li $v0, 5 		
+syscall
+
+move $t0, $v0 
+
+li $v0,4
+la $a0,prompt3
+syscall
+			
+li $t1, 0 		
+li $t2, 1 		
+	
+jr $ra			
+
+Enter_items:
+
+addi $t2, $t2, 1 	
+
+la $a0,items		
+li $v0, 4 		
+syscall
+
+li $v0, 5 		
+syscall
+	
+sw $v0, array($t1)  	
+addi $t1, $t1, 4    	
+
+ble $t2, $t0, Enter_items
+
+li $v0,4
+la $a0,prompt4
+syscall
+
+jr $ra 			
+	
+Display_Unsorted_arrayV:
+
+li $t1, 0 		
+li $t2, 1 		
+	
+la $a0,Unsorted_array		
+li $v0, 4 			
+syscall
+	
+Print_Unsorted_ArrayV:
+
+addi $t2, $t2, 1 	
+
+lw $a0, array($t1) 	
+li $v0, 1 		
+syscall
+		
+la $a0, nl 		
+li $v0, 4 		
+syscall
+	
+addi $t1, $t1, 4 	
+		
+ble $t2, $t0,Print_Unsorted_ArrayV 
+	
+jr $ra	
+
+Display_Unsorted_arrayH:
+
+li $t1, 0 		
+li $t2, 1 		
+	
+la $a0,List		
+li $v0, 4 			
+syscall
+	
+Print_Unsorted_ArrayH:
+
+addi $t2, $t2, 1 	
+
+lw $a0, array($t1) 	
+li $v0, 1 		
+syscall
+		
+la $a0, tl 		
+li $v0, 4 		
+syscall
+	
+addi $t1, $t1, 4 	
+		
+ble $t2, $t0,Print_Unsorted_ArrayH 
+
+la $a0, B 		
+li $v0, 4 		
+syscall
+
+
+li $v0,4
+la $a0,prompt4
+syscall
+
+jr $ra	
+
+# Hasnain Khalid
+			
+sort_array_descending:
+li $t2, 0
+				 
+outer:
+addi $t2, $t2, 1 		
+la $a1, array 			
+li $t1, 0 	
+		
+sub $t3, $t0, 1 		
+addi $t4, $t2, 1 
+		
+ble $t2, $t3, inner 		
+
+jr $ra				
+
+inner:
+lw $t5, 0($a1) 			
+lw $t6, 4($a1) 			
+blt $t5, $t6, swap 		
+j continue	
+		
+swap:
+sw $t6, 0($a1) 			
+sw $t5, 4($a1) 			
+
+continue:
+addi $a1, $a1, 4 		
+addi $t4, $t4, 1 		
+bgt $t4, $t0, outer 		
+j inner 			
+
+sorted_array_descending_displayV:
+li $t1, 0 		
+li $t2, 1 		
+	
+la $a0,display_descending                		
+li $v0, 4 			
+syscall
+	
+print_sorted_arrayV:
+addi $t2, $t2, 1 	
+
+lw $a0, array($t1) 	
+li $v0, 1 		
+syscall
+		
+la $a0, nl 		
+li $v0, 4 		
+syscall
+	
+addi $t1, $t1, 4 	
+		
+ble $t2, $t0, print_sorted_arrayV	
+
+jr $ra	
+
+sorted_array_descending_displayH:
+li $t1, 0 		
+li $t2, 1 		
+
+la $a0,List		
+li $v0, 4 			
+syscall	
+
+print_sorted_arrayH:
+addi $t2, $t2, 1 	
+
+lw $a0, array($t1) 	
+li $v0, 1 		
+syscall
+
+la $a0,t2		
+li $v0, 4 			
+syscall			
+	
+addi $t1, $t1, 4 	
+		
+ble $t2, $t0, print_sorted_arrayH	
+
+la $a0, B 		
+li $v0, 4 		
+syscall
+
+li $v0,4
+la $a0,prompt4
+syscall
+
+jr $ra	
+			
+
+#NAUSHEEN KALEEEM 
+						
+sort_array_ascending:
+
+li $t2, 0				
+out:
+
+addi $t2, $t2, 1 		
+la $a1, array 			
+li $t1, 0 
+		
+sub $t3, $t0, 1 		
+addi $t4, $t2, 1 		
+ble $t2, $t3, inn		
+jr $ra	
+			
+inn:
+lw $t5, 0($a1) 			
+lw $t6, 4($a1) 			
+bgt $t5, $t6, swp 		
+j cont			
+
+swp:
+sw $t6, 0($a1) 			
+sw $t5, 4($a1) 			
+
+cont:
+addi $a1, $a1, 4 		
+addi $t4, $t4, 1 		
+bgt $t4, $t0, out 		
+j inn 			
+
+sorted_array_ascending_displayV:
+
+li $t1, 0 		
+li $t2, 1 		
+	
+la $a0,display_ascending 		
+li $v0, 4 			
+syscall
+	
+print_sorted_array:
+addi $t2, $t2, 1 	
+
+lw $a0, array($t1) 	
+li $v0, 1 		
+syscall
+		
+la $a0, nl 		
+li $v0, 4 		
+syscall
+	
+addi $t1, $t1, 4 	
+		
+ble $t2, $t0, print_sorted_array	
+
+jr $ra	
+
+sorted_array_ascending_displayH:
+li $t1, 0 		
+li $t2, 1 		
+
+la $a0,List		
+li $v0, 4 			
+syscall	
+
+print_sorted_array_as:
+addi $t2, $t2, 1 	
+
+lw $a0, array($t1) 	
+li $v0, 1 		
+syscall
+
+la $a0,t2		
+li $v0, 4 			
+syscall			
+	
+addi $t1, $t1, 4 	
+		
+ble $t2, $t0, print_sorted_array_as	
+
+la $a0, B 		
+li $v0, 4 		
+syscall
+
+li $v0,4
+la $a0,prompt4
+syscall
+
+jr $ra					
+	
+#ZOYA HASAN
+							
+search_element:	
+			
+li $v0, 4
+la $a0, searching					
+syscall
+
+li $v0, 4
+la $a0, searching_element				
+syscall
+		
+li $v0, 5			
+syscall
+		
+move $t0, $v0			
+		
+li $t2, 0			
+li $t4, 2 			
+li $t6, 4			
+
+jr $ra				
+			
+search:
+
+bgt $t2, $t3, return	
+	
+middle_num:
+
+add $t7, $t2, $t3	
+div $t7, $t4 
+mflo $t8		
+		
+mult $t8, $t6		
+mflo $t1	
+		
+lw $t5, array($t1)	
+					
+bgt $t5, $t0, lower	
+blt $t5, $t0, upper	
+li $s0, 1		
+jr $ra			
+	
+upper:			
+
+add $t2, $t8, 1		
+j search		
+	
+lower:	
+			
+sub $t3, $t8, 1		
+j search		
+	
+return:
+
+li $s0, 0		
+jr $ra			
+
+search_result:
+
+beqz $s0, not_found		
+
+found:
+
+move $a0, $t0		
+			
+li $v0, 1		
+syscall
+			
+la $a0, f		
+li $v0, 4		
+syscall
+
+div $t1, $t6		
+mflo $a0		
+
+li $v0, 1		
+syscall
+			
+la $a0, cl_bracket	
+li $v0, 4		
+syscall
+	
+jr $ra			
+	
+not_found:
+
+move $a0, $t0		
+			
+li $v0, 1		
+syscall
+
+li $v0, 4			
+la $a0, nf		
+syscall	
+				
+jr $ra	
+
+again:
+
+la $a0, again_search 	
+li $v0, 4 		
+syscall
+
+li $v0,5
+syscall 
+
+move $t0,$v0
+
+li $t1,1
+
+beq $t0,$t1,search_element
+				
+Exit:
+la $a0, terminate 	
+li $v0, 4 		
+syscall
+
+la $a0, end 	
+li $v0, 4 		
+syscall
+	
+li $v0, 10 		
+syscall
+
